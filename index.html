@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+   
+    <link rel="stylesheet" href="./asset/css/style.css">
+    
+</head>
+<body>
+    <div class="player">
+        <div class="dashboard">
+            <!--HEADER-->
+            <header>
+                <h4>Now Playing</p>
+                <h2>Song Name</h2>    
+            </header>
+            <!--CD-->
+            <div class="cd">
+                <div class="cd__thumbnail"
+                style="background-image: url('./asset/img/wowy.jpg');">
+                </div>
+            </div>    
+            <!--CONTROL BAR-->
+            <div class="cd__control">
+                <div class="btn control__btn__repeat">
+                    <i class='bx bx-refresh'></i>
+                </div>
+                <div class="btn control__btn__previous">
+                    <i class='bx bx-skip-previous'></i>
+                </div>
+                <div class="btn control__btn__toggle--play">
+                    <i class='bx bx-play icon__play'></i>
+                    <i class='bx bx-pause icon__pause'></i>
+                </div>
+                <div class="btn control__btn__next">
+                    <i class='bx bx-skip-next'></i>
+                </div>
+                <div class="btn control__btn__mixed">
+                    <i class='bx bx-infinite'></i>
+                </div>
+            </div>
+
+            <div class="process__wrap">
+                
+                <input type="range" id="process" class="process" max ="100" min="0" step="1" value="0">
+                
+            </div>
+
+            <audio id="audio" src=""></audio>
+        </div>
+        <div class="playlist">
+        </div>
+    </div>
+
+    <script>
+        const $ = document.querySelector.bind(document);
+        const $$ = document.querySelectorAll.bind(document);
+
+        const player = $('.player')
+        const cd = $('.cd')
+        const heading = $('header h2')
+        const cdThumb = $('.cd__thumbnail')
+        const audio = $('#audio')
+        const playBtn = $('.control__btn__toggle--play')
+        const process = $('#process')
+        const nextBtn = $('.control__btn__next')
+        const prevBtn = $('.control__btn__previous')
+        const mixedBtn = $('.control__btn__mixed')
+        const repeatBtn = $('.control__btn__repeat')
+        const playlist = $('.playlist')
+
+
+        const app = {
+            currentIndex: 0,
+            isPlaying : false,
+            isMixed: false,
+            isRepeat: false,
+            // mảng  chứa các bài hát 
+            song: [
+                
+                {
+                    name: 'Một Điếu',
+                    singer: 'Wowy',
+                    path: './asset/mp3/Một Điếu.mp3',
+                    image: './asset/img/wowy.jpg'
+                },
+                {
+                    name: 'Bay Thật Xa',
+                    singer: 'Wowy',
+                    path: './asset/mp3/Bay Thật Xa.mp3',
+                    image: './asset/img/wowy.jpg'
+                },
+                {
+                    name: 'Chạy',
+                    singer: 'Wowy',
+                    path: './asset/mp3/Chạy.mp3',
+                    image: './asset/img/wowy.jpg'
+                },
+                
+                {
+                    name: 'Chưa Bao Giờ',
+                    singer: 'DSK',
+                    path: './asset/mp3/Chưa Bao Giờ.mp3',
+                    image: './asset/img/DSK1.jpg'
+                },
+                {
+                    name: 'Điếu Thuốc Cuối',
+                    singer: 'DSK',
+                    path: './asset/mp3/Điếu Thuốc Cuối.mp3',
+                    image: './asset/img/DSK1.jpg'
+                },
+                {
+                    name: 'Một Lần Nữa',
+                    singer: 'DSK',
+                    path: './asset/mp3/Một Lần Nữa.mp3',
+                    image: './asset/img/DSK1.jpg'
+                },
+                {
+                    name: 'Nắng',
+                    singer: 'DSK',
+                    path: './asset/mp3/Nắng.mp3',
+                    image: './asset/img/DSK2.jpg'
+                },
+                {
+                    name: 'Nếu Ngày Mai Tao Chết',
+                    singer: 'DSK',
+                    path: './asset/mp3/Nếu Ngày Mai Tao Chết.mp3',
+                    image: './asset/img/DSK2.jpg'
+                },
+                {
+                    name: 'Rewind',
+                    singer: 'DSK',
+                    path: './asset/mp3/Rewind.mp3',
+                    image: './asset/img/DSK3.jpg'
+                },
+                {
+                    name: 'Đỉnh Núi Tuyết Của Tiếc Nuối',
+                    singer: 'Chú 3',
+                    path: './asset/mp3/Đỉnh Núi Tuyết Của Tiếc Nuối.mp3',
+                    image: './asset/img/Datmaniac.jpg'
+                },
+                {
+                    name: 'I Like Me Better Now',
+                    singer: 'Chú 3',
+                    path: './asset/mp3/I Like Me Better Now.mp3',
+                    image: './asset/img/Datmaniac.jpg'
+                },
+                {
+                    name: 'Không Có Ánh Sáng',
+                    singer: 'Chú 3',
+                    path: './asset/mp3/Không Có Ánh Sáng.mp3',
+                    image: './asset/img/Datmaniac.jpg'
+                },
+                {
+                    name: 'Lửa Màu Đen',
+                    singer: 'Chú 3',
+                    path: './asset/mp3/Lửa Màu Đen.mp3',
+                    image: './asset/img/Datmaniac.jpg'
+                },
+                {
+                    name: 'Mỡ Mỏng',
+                    singer: 'Chú 3',
+                    path: './asset/mp3/Mỡ Mỏng.mp3',
+                    image: './asset/img/Datmaniac.jpg'
+                },
+                {
+                    name: 'Quỷ Dữ',
+                    singer: 'Chú 3',
+                    path: './asset/mp3/Quỷ Dữ.mp3',
+                    image: './asset/img/Datmaniac.jpg'
+                }
+            ],
+            // hàm render ra playlist
+            render: function(){
+                const htmls = this.song.map((song, index) => {
+                    return `
+                        <div class="song ${index === this.currentIndex ? 'active' : ''}" data-index="${index}">
+                            <div class="thumb" 
+                                style="background-image: url('${song.image}')">
+                            </div>
+                            <div class="body">
+                                <h3 class="title">${song.name}</h3>
+                                <p class="artist">${song.singer}</p>
+                            </div>
+                            <div class="option">
+                                <i class='bx bx-dots-horizontal-rounded'></i>
+                            </div>
+                        </div> 
+                    `
+                })
+                // dòng này để in playlist 
+                playlist.innerHTML = htmls.join('')
+            },
+            // hàm dùng để định nghĩa các đối tượng
+            defineProperties: function() {
+                Object.defineProperty(this, 'currentSong', {
+                    get: function() {
+                        return this.song[this.currentIndex]
+                    }
+                })
+            },
+            // hàm dùng để lắng nghe và xử lý các sự kiện trong DOM
+            handleEvents: function() {
+                const _this = this;
+                const cdWidth = cd.offsetWidth;
+                
+                // xu ly CD quay va dung
+               const cdThumbAnimate = cdThumb.animate([
+                    {transform: 'rotate(360deg)'}
+                ],{
+                    duration: 10000, //10 secs
+                    iterations: Infinity
+                })
+                cdThumbAnimate.pause()
+
+                // xu Ly phong to/ Thu nho Cd
+                document.onscroll = function(){
+                    const scrollTop = window.scrollY || document.documentElement.scrollTop
+                    const newCdWidth = cdWidth - scrollTop
+
+                    cd.style.width = newCdWidth > 0 ? newCdWidth + 'px' : 0
+                    cd.style.opacity = newCdWidth / cdWidth
+                }
+                // Xu ly khi click play
+                playBtn.onclick  = function() {
+                    if(_this.isPlaying) {
+                        audio.pause()
+                    }
+                    else {
+                        audio.play()
+                    }
+                   
+                }
+                // khi song = play
+                audio.onplay = function(){
+                    _this.isPlaying = true
+                    player.classList.add('playing')
+                    cdThumbAnimate.play();
+                }
+                // khi song = pause
+                audio.onpause = function(){
+                    _this.isPlaying = false
+                    player.classList.remove('playing')
+                    cdThumbAnimate.pause();
+                }
+
+                //Khi tien do bai hat thay doi
+                audio.ontimeupdate = function(){
+                    if(audio.duration){
+                        const processPercent = Math.floor(audio.currentTime / audio.duration *100);
+                        process.value = processPercent;
+                    }
+                }
+                // xu ly tua bai hat
+                process.onchange = function(e){
+                    const seekTime = audio.duration / 100 * e.target.value;
+                    audio.currentTime = seekTime;
+                }
+
+                // Khi next song
+                nextBtn.onclick = function() {
+                    if(_this.isMixed){
+                        _this.playMixedSong();
+                    }
+                    else{
+                        _this.nextSong();
+                    }
+                   
+                    audio.play();
+                    _this.render();
+                    _this.scrollToActiveSong();
+                }
+                // khi previous song 
+                prevBtn.onclick = function(){
+                    if(_this.isMixed){
+                        _this.playMixedSong();
+                    }
+                    else{
+                        _this.previousSong();
+                    }
+                    
+                    audio.play();
+                    _this.render();
+                    _this.scrollToActiveSong();
+                }
+                // bat tat mixed bai hat
+                mixedBtn.onclick = function(e){
+                    _this.isMixed = !_this.isMixed;
+                    mixedBtn.classList.toggle('active', _this.isMixed);
+                }
+                // phat lai khi end
+                repeatBtn.onclick = function(e) {
+                    _this.isRepeat = !_this.isRepeat;
+                    repeatBtn.classList.toggle('active', _this.isRepeat);
+
+                }
+
+                // xu ly next song khi audio end
+                audio.onended = function() {
+                    if(_this.isRepeat){
+                        audio.play();
+                    }
+                    else{
+                        nextBtn.click();
+                    }
+                }
+                // lang nghe hanh vi click vao playlist
+                playlist.onclick = function(e){
+                    const songNode = e.target.closest('.song:not(.active)')
+                    if(songNode|| e.target.closest('.option')) {
+                        if(songNode){
+                            _this.currentIndex = Number(songNode.dataset.index);
+                            _this.loadCurrentSong();
+                            _this.render();
+                            audio.play();
+                        }
+                }
+            }
+            },
+
+            scrollToActiveSong: function(){
+                setTimeout(() => {
+                    $('.song.active').scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'nearest',
+                    })
+
+                }, 300)
+            },
+
+            // hàm dùng để tải bài hát theo index
+            loadCurrentSong: function() {
+                heading.textContent = this.currentSong.name
+                cdThumb.style.backgroundImage = `url('${this.currentSong.image}')`
+                audio.src = this.currentSong.path
+
+            },
+            nextSong: function(){
+                this.currentIndex++
+                if(this.currentIndex >= this.song.length){
+                    this.currentIndex = 0
+                }
+                this.loadCurrentSong();
+            },
+            previousSong: function(){
+                this.currentIndex--
+                if(this.currentIndex < 0){
+                    this.currentIndex = this.song.length - 1;
+                }
+                this.loadCurrentSong();
+            },
+            playMixedSong: function() {
+                let newIndex 
+                do{
+                    newIndex = Math.floor(Math.random() * this.song.length)
+                }
+                while (newIndex === this.currentIndex)
+                    this.currentIndex = newIndex;
+                    this.loadCurrentSong();
+            },
+
+            start: function() {
+                // dinh nghia cac thuoc tinh cho Obj
+                this.defineProperties()
+        
+                // lang nghe/ xu ly cac su kien Dom
+                this.handleEvents()
+
+                //lay thoong tin bai hat dau tien vao UI khi chay lan dau
+                this.loadCurrentSong()
+
+               // render playlist
+                this.render()
+            } 
+        }
+
+        app.start()
+    </script>
+</body>
+</html>
